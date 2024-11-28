@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,7 +20,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   final TextEditingController _cityController = TextEditingController();
   Map<String, dynamic>? _weatherData;
 
-  final String _apiKey = "ebb1e1c04c5e754acc662be08cd75352"; // Replace with your OpenWeather API key
+  final String _apiKey = "ebb1e1c04c5e754acc662be08cd75352"; // Replace with your API key
 
   Future<void> fetchWeatherData(String city) async {
     final String url =
@@ -51,109 +52,147 @@ class _WeatherScreenState extends State<WeatherScreen> {
       appBar: AppBar(
         title: const Text(
           "Weather App",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.teal.shade700,
         centerTitle: true,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.deepPurple.shade200, Colors.deepPurple.shade800],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: Stack(
+        children: [
+          // Background Design
+          Positioned(
+            top: -50,
+            right: -50,
+            child: CircleAvatar(
+              radius: 120,
+              backgroundColor: Colors.tealAccent.shade100.withOpacity(0.3),
+            ),
           ),
-        ),
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            TextField(
-              controller: _cityController,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.location_city, color: Colors.deepPurple),
-                labelText: "Enter city name",
-                labelStyle: TextStyle(color: Colors.deepPurple.shade800),
-                fillColor: Colors.white.withOpacity(0.8),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.deepPurple),
-                ),
-              ),
+          Positioned(
+            bottom: -50,
+            left: -50,
+            child: CircleAvatar(
+              radius: 150,
+              backgroundColor: const Color.fromARGB(255, 226, 233, 29).withOpacity(0.2),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
-                final city = _cityController.text.trim();
-                if (city.isNotEmpty) {
-                  fetchWeatherData(city);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Please enter a city name")),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              icon: Icon(Icons.search, color: Colors.white),
-              label: const Text(
-                "Get Weather",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+          ),
+          Positioned(
+            bottom: 100,
+            right: -50,
+            child: CircleAvatar(
+              radius: 80,
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.2),
             ),
-            const SizedBox(height: 24),
-            if (_weatherData != null) _buildWeatherCard(),
-          ],
-        ),
+          ),
+
+          // Main Content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _cityController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.location_city, color: Colors.teal),
+                    labelText: "Enter city name",
+                    labelStyle: TextStyle(color: Colors.teal.shade700),
+                    fillColor: Colors.white.withOpacity(0.8),
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.teal.shade200),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    final city = _cityController.text.trim();
+                    if (city.isNotEmpty) {
+                      fetchWeatherData(city);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Please enter a city name")),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal.shade400,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: Icon(Icons.search, color: Colors.white),
+                  label: const Text(
+                    "Get Weather",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                if (_weatherData != null) _buildWeatherCard(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildWeatherCard() {
-    return Card(
-      shape: RoundedRectangleBorder(
+    return Container(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
+        color: Colors.white.withOpacity(0.7),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
-      color: Colors.white.withOpacity(0.9),
-      elevation: 10,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              _weatherData!['name'],
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple.shade800,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               children: [
-                _buildWeatherInfo(
-                    "Temperature", "${_weatherData!['main']['temp']}°C"),
-                _buildWeatherInfo(
-                    "Condition", _weatherData!['weather'][0]['description']),
+                Text(
+                  _weatherData!['name'],
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal.shade900,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildWeatherInfo(
+                        "Temperature", "${_weatherData!['main']['temp']}°C"),
+                    _buildWeatherInfo("Condition",
+                        _weatherData!['weather'][0]['description']),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildWeatherInfo(
+                        "Humidity", "${_weatherData!['main']['humidity']}%"),
+                    _buildWeatherInfo(
+                        "Wind Speed", "${_weatherData!['wind']['speed']} m/s"),
+                  ],
+                ),
               ],
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildWeatherInfo(
-                    "Humidity", "${_weatherData!['main']['humidity']}%"),
-                _buildWeatherInfo(
-                    "Wind Speed", "${_weatherData!['wind']['speed']} m/s"),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -167,7 +206,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.deepPurple.shade400,
+            color: Colors.teal.shade700,
           ),
         ),
         const SizedBox(height: 4),
@@ -176,7 +215,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.deepPurple,
+            color: Colors.teal,
           ),
         ),
       ],
